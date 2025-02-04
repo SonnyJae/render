@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.render.render.service.impl.MaterialMapper">
+    <select id="selectList" parameterType="com.render.render.service.MaterialVO" resultType="com.render.render.service.MaterialVO">
+        /*****************selectList 실행!!!******************/
+        SELECT * FROM dental_materials
+    </select>
+</mapper>
