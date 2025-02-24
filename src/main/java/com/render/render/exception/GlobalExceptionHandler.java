@@ -1,6 +1,7 @@
 package com.render.render.exception;  // 예외 처리는 보통 exception 패키지에 둡니다.
 
 import com.render.render.service.JsonModel;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -40,16 +41,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(jsonModel, HttpStatus.BAD_REQUEST);  // 400 상태 코드 반환
     }
 
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//
-//        ex.getConstraintViolations().forEach(violation -> {
-//            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
-//        });
-//
-//        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<JsonModel> handleDataAccessException(DataAccessException ex) {
+        JsonModel jsonModel = new JsonModel();
+        jsonModel.setResultCode("500");
+        jsonModel.setResultMessage("데이터베이스 오류가 발생했습니다: " + ex.getMessage());
+        return new ResponseEntity<>(jsonModel, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
+    
     // 추가적인 예외 처리 핸들러 여기에 추가 ㄱㄱ
 }
