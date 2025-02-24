@@ -8,4 +8,21 @@
         /*****************selectList 실행!!!******************/
         SELECT * FROM dental_materials
     </select>
+
+    <update id="updateProperty" parameterType="com.render.render.service.MaterialVO" >
+        /*****************updateProperty 실행!!!******************/
+        update dental_materials set quantity=#{quantity} where id=#{id}
+    </update>
+
+    <select id="deleteProperty" parameterType="com.render.render.service.MaterialVO" resultType="String" >
+        /*****************deleteProperty 실행!!!******************/
+        delete from dental_materials where id=#{id}
+        RETURNING name
+    </select>
+
+    <insert id="insertProperty" parameterType="com.render.render.service.MaterialVO" >
+        /*****************insertProperty 실행!!!******************/
+        INSERT INTO dental_materials (category, code, name, diameter, length, type, quantity)
+        VALUES (#{category},#{code},#{name},#{diameter},#{length},#{type},#{quantity});
+    </insert>
 </mapper>

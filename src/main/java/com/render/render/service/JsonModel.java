@@ -33,6 +33,7 @@ public class JsonModel {
     public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
     }
+
     public String getResultCode() {
         return resultCode;
     }
