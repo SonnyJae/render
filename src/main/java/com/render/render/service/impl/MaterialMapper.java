@@ -9,6 +9,10 @@ import java.util.List;
 public interface MaterialMapper {
     List<MaterialVO> selectList(MaterialVO materialVO);
 
+    MaterialVO selectMaterialProperty(Integer id);
+
+    String updateQuantity(MaterialVO materialVO);
+
     int updateProperty(MaterialVO materialVO);
 
     String deleteProperty(MaterialVO materialVO);

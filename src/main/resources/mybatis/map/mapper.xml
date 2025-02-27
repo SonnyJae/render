@@ -9,10 +9,30 @@
         SELECT * FROM dental_materials
     </select>
 
+    <select id="selectMaterialProperty" parameterType="java.lang.Integer" resultType="com.render.render.service.MaterialVO">
+        /*****************selectList 실행!!!******************/
+        SELECT * FROM dental_materials where id=#{id}
+    </select>
+
+    <select id="updateQuantity" parameterType="com.render.render.service.MaterialVO" resultType="String">
+        /*****************updateQuantity 실행!!!******************/
+        update dental_materials set quantity=#{quantity} where id=#{id} RETURNING name
+    </select>
+
     <update id="updateProperty" parameterType="com.render.render.service.MaterialVO" >
         /*****************updateProperty 실행!!!******************/
-        update dental_materials set quantity=#{quantity} where id=#{id}
+        update dental_materials
+        set
+            category=#{category},
+            code=#{code},
+            name=#{name},
+            diameter=#{diameter}::numeric(5,2),
+            length=#{length}::numeric(5,2),
+            quantity=#{quantity}::int4
+        where id=#{id}
     </update>
+
+
 
     <select id="deleteProperty" parameterType="com.render.render.service.MaterialVO" resultType="String" >
         /*****************deleteProperty 실행!!!******************/
@@ -22,7 +42,7 @@
 
     <insert id="insertProperty" parameterType="com.render.render.service.MaterialVO" >
         /*****************insertProperty 실행!!!******************/
-        INSERT INTO dental_materials (category, code, name, diameter, length, type, quantity)
-        VALUES (#{category},#{code},#{name},#{diameter},#{length},#{type},#{quantity});
+        INSERT INTO dental_materials (category, code, name, diameter, length, quantity)
+        VALUES (#{category},#{code},#{name},#{diameter}::numeric(5,2),#{length}::numeric(5,2),#{quantity}::int4);
     </insert>
 </mapper>

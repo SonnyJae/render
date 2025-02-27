@@ -20,15 +20,31 @@ public class GlobalExceptionHandler {
     public ResponseEntity<JsonModel> handleValidationExceptions(MethodArgumentNotValidException ex) {
         StringBuilder msg=new StringBuilder();
         List<ObjectError> allErrors = ex.getBindingResult().getAllErrors();
+        boolean isBlankError=false;//공백 오류인 경우
+        boolean isNumberError=false;//공백 오류인 경우
 
         // 검증 오류 메시지 추출
         // 마지막 항목을 제외하고 ',' 추가
         for (int i = 0; i < allErrors.size(); i++) {
             String fieldName = ((FieldError) allErrors.get(i)).getField();
             String errorMessage = allErrors.get(i).getDefaultMessage();
-
+            isBlankError=false;
+            isNumberError=false;
             if (errorMessage != null) {
-                msg.append(fieldName);
+                // 공백 관련 오류일 경우
+                if (errorMessage.contains("필수 입력")) {
+                    msg.append(fieldName);
+                    isBlankError=true;//공백오류로 처리
+                }
+                // 정규 표현식 오류일 경우
+                else if (errorMessage.contains("숫자만 입력")) {
+                    msg.append(fieldName);
+                    isNumberError=true;//숫자오류로 처리
+                }
+                // 그 외의 오류 처리
+                else {
+                    msg.append(fieldName).append(" 오류: ").append(errorMessage);
+                }
                 // 마지막 항목이 아니면 ',' 추가
                 if (i < allErrors.size() - 1) {
                     msg.append(", ");
@@ -36,7 +52,11 @@ public class GlobalExceptionHandler {
             }
         }
         jsonModel.setResultCode("400");
-        jsonModel.setResultMessage(msg.toString()+"는 필수입력 항목입니다.");//forEach에서 쌓인 errorMessage를 한번에 jsonModel에 담음
+        if(isBlankError==true && isNumberError==false){//공백오류난 경우 메세지 처리
+            jsonModel.setResultMessage(msg.toString()+"는 필수입력 항목입니다.");
+        }else if(isBlankError==false && isNumberError==true){//정규표현식(숫자형태) 오류난 경우 메세지 처리
+            jsonModel.setResultMessage(msg.toString()+"는 숫자만 입력 가능합니다.");
+        }
 
         return new ResponseEntity<>(jsonModel, HttpStatus.BAD_REQUEST);  // 400 상태 코드 반환
     }
