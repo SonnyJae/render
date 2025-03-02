@@ -15,7 +15,7 @@ public interface MaterialMapper {
 
     int updateProperty(MaterialVO materialVO);
 
-    String deleteProperty(MaterialVO materialVO);
+    String deleteProperty(Long id);
 
     int insertProperty(MaterialVO materialVO);
 }

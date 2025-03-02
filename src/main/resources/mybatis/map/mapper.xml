@@ -6,7 +6,7 @@
 <mapper namespace="com.render.render.service.impl.MaterialMapper">
     <select id="selectList" parameterType="com.render.render.service.MaterialVO" resultType="com.render.render.service.MaterialVO">
         /*****************selectList 실행!!!******************/
-        SELECT * FROM dental_materials
+        SELECT * FROM dental_materials ORDER BY diameter ASC, length ASC;
     </select>
 
     <select id="selectMaterialProperty" parameterType="java.lang.Integer" resultType="com.render.render.service.MaterialVO">
@@ -34,9 +34,9 @@
 
 
 
-    <select id="deleteProperty" parameterType="com.render.render.service.MaterialVO" resultType="String" >
+    <select id="deleteProperty" parameterType="Long" resultType="String" >
         /*****************deleteProperty 실행!!!******************/
-        delete from dental_materials where id=#{id}
+        delete from dental_materials where id=#{id}::int4
         RETURNING name
     </select>
 

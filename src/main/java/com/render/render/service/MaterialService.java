@@ -38,8 +38,8 @@ public class MaterialService {
 
     //품목을 삭제한다.
     @Transactional
-    public String deleteProperty(MaterialVO materialVO) {
-        return materialMapper.deleteProperty(materialVO);
+    public String deleteProperty(Long id) {
+        return materialMapper.deleteProperty(id);
     }
 
     //품목을 추가한다.

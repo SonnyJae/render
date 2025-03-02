@@ -88,17 +88,17 @@ public class DataController {
     }
 
     @DeleteMapping(value="/deleteProperty")
-    public ResponseEntity<JsonModel> deleteProperty(@RequestBody MaterialVO materialVO) throws Exception{
+    public ResponseEntity<JsonModel> deleteProperty(@RequestParam("id") Long id) throws Exception{
         JsonModel jsonModel = new JsonModel();
         //id를 식별할 수 없을경우 예외로 던짐
-        if(materialVO.getId()==null){
+        if(id==null){
             jsonModel.setResultMessage("id를 식별할 수 없습니다.");
             jsonModel.setResultCode("400");//삭제 오류 코드 : 400
             return new ResponseEntity(jsonModel, HttpStatus.BAD_REQUEST);
         }
 //        log.info("materialVO>>>>>>>>{}",materialVO);
 
-        String name=materialService.deleteProperty(materialVO);
+        String name=materialService.deleteProperty(id);
         String msg="";
         if(name !=null){
             msg=name+"삭제가 완료되었습니다.";

@@ -28,18 +28,19 @@ public class GlobalExceptionHandler {
         for (int i = 0; i < allErrors.size(); i++) {
             String fieldName = ((FieldError) allErrors.get(i)).getField();
             String errorMessage = allErrors.get(i).getDefaultMessage();
-            isBlankError=false;
-            isNumberError=false;
+
             if (errorMessage != null) {
-                // 공백 관련 오류일 경우
+                // 공백 오류일 경우 우선 처리
                 if (errorMessage.contains("필수 입력")) {
+                    msg.setLength(0); // StringBuilder 초기화
                     msg.append(fieldName);
-                    isBlankError=true;//공백오류로 처리
+                    isBlankError=true;
+                    break; // 공백 오류 발생 시 다른 오류 메시지 무시하고 종료
                 }
                 // 정규 표현식 오류일 경우
-                else if (errorMessage.contains("숫자만 입력")) {
+                if (errorMessage.contains("숫자만 입력") && isBlankError == false) {
                     msg.append(fieldName);
-                    isNumberError=true;//숫자오류로 처리
+//                    isNumberError=true;//숫자오류로 처리
                 }
                 // 그 외의 오류 처리
                 else {
@@ -50,12 +51,12 @@ public class GlobalExceptionHandler {
                     msg.append(", ");
                 }
             }
-        }
+        }//for문 끝
         jsonModel.setResultCode("400");
-        if(isBlankError==true && isNumberError==false){//공백오류난 경우 메세지 처리
+        if(isBlankError==true ){//공백오류난 경우 메세지 처리
             jsonModel.setResultMessage(msg.toString()+"는 필수입력 항목입니다.");
-        }else if(isBlankError==false && isNumberError==true){//정규표현식(숫자형태) 오류난 경우 메세지 처리
-            jsonModel.setResultMessage(msg.toString()+"는 숫자만 입력 가능합니다.");
+        }else if(isBlankError==false ){//정규표현식(숫자형태) 오류난 경우 메세지 처리
+            jsonModel.setResultMessage(msg.toString());
         }
 
         return new ResponseEntity<>(jsonModel, HttpStatus.BAD_REQUEST);  // 400 상태 코드 반환
