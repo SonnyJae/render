@@ -23,12 +23,26 @@ public class MaterialVO {
     @Pattern(regexp = "^([0-9]{1,3}(\\.[0-9]{1,2})?)$", message = "Diameter는 0.00 이상 999.99 이하의 숫자여야 합니다.")
     private String diameter;    // 직경(mm)
 
-    @NotBlank(message = "Length는 필수 입력 항목입니다.")
+    @NotBlank(message = "Heigth는 필수 입력 항목입니다.")
     @Pattern(regexp = "^([0-9]{1,3}(\\.[0-9]{1,2})?)$", message = "Diameter는 0.00 이상 999.99 이하의 숫자여야 합니다.")
-    private String length;  // 길이(mm)
+    private String height;  // 높이(mm)
 
     @NotBlank(message = "Quantity는 필수 입력항목입니다.")
     @Pattern(regexp = "^[0-9]+$", message = "Quantity는 숫자만 입력 가능합니다.")
     private String quantity;   // 수량
+
+    /*
+    *20250303 윤동현 요청에 의해 추가
+    */
+    @NotBlank(message = "gheight는 필수 입력항목입니다.")
+    @Pattern(regexp = "^([0-9]{1,3}(\\.[0-9]{1,2})?)$", message = "gheight는 0.00 이상 999.99 이하의 숫자여야 합니다.")
+    private String gheight;   //진지발높이
+
+    @NotBlank(message = "cuff는 필수 입력항목입니다.")
+    @Pattern(regexp = "^[0-9]+$", message = "cuff는 정수만 입력 가능합니다.")
+    private String cuff;   //cuff 구분값
+
+    @NotBlank(message = "icode는 필수 입력항목입니다.")
+    private String icode;   //보험코드
 }
 
