@@ -16,7 +16,7 @@
 
     <select id="updateQuantity" parameterType="com.render.render.service.MaterialVO" resultType="String">
         /*****************updateQuantity 실행!!!******************/
-        update dental_materials set quantity=#{quantity}::int4 where id=#{id} RETURNING name
+        update dental_materials set quantity=#{quantity}::int4,update_at=now() where id=#{id} RETURNING name
     </select>
 
     <update id="updateProperty" parameterType="com.render.render.service.MaterialVO" >
@@ -31,7 +31,8 @@
             quantity=#{quantity}::int4,
             gheight=#{gheight}::numeric(5,2),
             cuff=#{cuff}::int4,
-            icode=#{icode}
+            icode=#{icode},
+            update_at=now()
         where id=#{id}
     </update>
 
