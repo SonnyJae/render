@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class MaterialVO {
     private Integer id; // 순번 (null 가능)
@@ -44,5 +46,8 @@ public class MaterialVO {
 
     @NotBlank(message = "icode는 필수 입력항목입니다.")
     private String icode;   //보험코드
+
+    //2025-03-06 추가
+    private String updateAt;    //마지막 수정일
 }
 
