@@ -6,7 +6,7 @@
 <mapper namespace="com.render.render.service.impl.MaterialMapper">
     <select id="selectList" parameterType="com.render.render.service.MaterialVO" resultType="com.render.render.service.MaterialVO">
         /*****************selectList 실행!!!******************/
-        SELECT * FROM dental_materials ORDER BY diameter ASC, height ASC;
+        SELECT * FROM dental_materials ORDER BY diameter ASC, height ASC, cuff ASC;
     </select>
 
     <select id="selectMaterialProperty" parameterType="java.lang.Integer" resultType="com.render.render.service.MaterialVO">
