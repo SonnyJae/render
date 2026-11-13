@@ -1,9 +1,11 @@
 package com.render.render.exception;  // 예외 처리는 보통 exception 패키지에 둡니다.
 
 import com.render.render.service.JsonModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
+@Slf4j
 @RestControllerAdvice  // 이 어노테이션으로 전역 예외 처리를 담당
 public class GlobalExceptionHandler {
-    JsonModel jsonModel = new JsonModel();
     // 검증 오류가 발생했을 때 처리하는 메서드
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<JsonModel> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        // 요청마다 새 객체 생성 (필드로 두면 동시 요청 시 메시지가 섞임)
+        JsonModel jsonModel = new JsonModel();
         StringBuilder msg=new StringBuilder();
         List<ObjectError> allErrors = ex.getBindingResult().getAllErrors();
         boolean isBlankError=false;//공백 오류인 경우
@@ -62,11 +66,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(jsonModel, HttpStatus.BAD_REQUEST);  // 400 상태 코드 반환
     }
 
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<JsonModel> handleDataAccessException(DataAccessException ex) {
+    // DB 접속 실패 시 트랜잭션 시작 단계에서 CannotCreateTransactionException 발생 → 함께 처리
+    @ExceptionHandler({DataAccessException.class, CannotCreateTransactionException.class})
+    public ResponseEntity<JsonModel> handleDataAccessException(Exception ex) {
+        // 상세 내용(SQL, 테이블명 등)은 서버 로그에만 남기고 클라이언트에는 일반 메시지만 반환
+        log.error("DB 오류", ex);
         JsonModel jsonModel = new JsonModel();
         jsonModel.setResultCode("500");
-        jsonModel.setResultMessage("데이터베이스 오류가 발생했습니다: " + ex.getMessage());
+        jsonModel.setResultMessage("데이터베이스 오류가 발생했습니다.");
         return new ResponseEntity<>(jsonModel, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
