@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -65,8 +66,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(jsonModel, HttpStatus.BAD_REQUEST);  // 400 상태 코드 반환
     }
 
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<JsonModel> handleDataAccessException(DataAccessException ex) {
+    // DB 접속 실패 시 트랜잭션 시작 단계에서 CannotCreateTransactionException 발생 → 함께 처리
+    @ExceptionHandler({DataAccessException.class, CannotCreateTransactionException.class})
+    public ResponseEntity<JsonModel> handleDataAccessException(Exception ex) {
         // 상세 내용(SQL, 테이블명 등)은 서버 로그에만 남기고 클라이언트에는 일반 메시지만 반환
         log.error("DB 오류", ex);
         JsonModel jsonModel = new JsonModel();
