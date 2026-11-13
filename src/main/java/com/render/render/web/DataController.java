@@ -54,13 +54,23 @@ public class DataController {
             jsonModel.setResultMessage(errMsg+"이 입력되지 않았습니다.");
             return new ResponseEntity(jsonModel,HttpStatus.BAD_REQUEST);
         }
+        if(!materialVO.getQuantity().matches("^[0-9]+$")){
+            jsonModel.setResultCode("400");
+            jsonModel.setResultMessage("수량은 0 이상의 정수만 입력 가능합니다.");
+            return new ResponseEntity(jsonModel,HttpStatus.BAD_REQUEST);
+        }
         String name=materialService.updateQuantity(materialVO);
+        if(name==null){
+            jsonModel.setResultCode("404");
+            jsonModel.setResultMessage("해당 id의 품목이 없습니다.");
+            return new ResponseEntity(jsonModel,HttpStatus.NOT_FOUND);
+        }
 
         String msg=name+" 의 속성을 변경했습니다.";
 
         jsonModel.setResultMessage(msg);
         jsonModel.setResultCode("200");
-        System.out.println("update 된 name >>> "+name);
+        log.info("updateQuantity 완료: id={}, name={}, quantity={}", materialVO.getId(), name, materialVO.getQuantity());
 
         return new ResponseEntity(jsonModel, HttpStatus.OK);
     }
@@ -77,12 +87,17 @@ public class DataController {
         }
         Integer id=materialVO.getId();
         MaterialVO selectResult=materialService.selectMaterialProperty(id);
-        int updateResult=materialService.updateProperty(materialVO);
+        if(selectResult==null){
+            jsonModel.setResultCode("404");
+            jsonModel.setResultMessage("해당 id의 품목이 없습니다.");
+            return new ResponseEntity(jsonModel,HttpStatus.NOT_FOUND);
+        }
+        materialService.updateProperty(materialVO);
         String msg=selectResult.getName()+"의 속성을 변경했습니다.";
 
         jsonModel.setResultMessage(msg);
         jsonModel.setResultCode("200");
-        System.out.println("update 된 name >>> "+selectResult.getName());
+        log.info("updateProperty 완료: id={}, name={}", id, selectResult.getName());
 
         return new ResponseEntity(jsonModel, HttpStatus.OK);
     }
@@ -99,13 +114,14 @@ public class DataController {
 //        log.info("materialVO>>>>>>>>{}",materialVO);
 
         String name=materialService.deleteProperty(id);
-        String msg="";
-        if(name !=null){
-            msg=name+"삭제가 완료되었습니다.";
-            jsonModel.setResultCode("200");//정상 삭제 코드 200
-            jsonModel.setResultMessage(msg);
+        if(name==null){
+            jsonModel.setResultCode("404");
+            jsonModel.setResultMessage("해당 id의 품목이 없습니다.");
+            return new ResponseEntity(jsonModel, HttpStatus.NOT_FOUND);
         }
-        System.out.println("delete 결과 >>> "+name);
+        jsonModel.setResultCode("200");//정상 삭제 코드 200
+        jsonModel.setResultMessage(name+"삭제가 완료되었습니다.");
+        log.info("deleteProperty 완료: id={}, name={}", id, name);
 
         return new ResponseEntity(jsonModel, HttpStatus.OK);
     }
@@ -123,7 +139,7 @@ public class DataController {
         
         int result=materialService.insertProperty(materialVO);
 
-        System.out.println("insert 결과 >>> "+result);
+        log.info("insertProperty 완료: name={}, result={}", materialVO.getName(), result);
         String msg=materialVO.getName()+"를 추가했습니다.";
         jsonModel.setResultMessage(msg);
         jsonModel.setResultCode("200");//삭제 오류 코드 : 400
